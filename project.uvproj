@@ -456,6 +456,16 @@
               <FileType>5</FileType>
               <FilePath>.\user\qep.hpp</FilePath>
             </File>
+            <File>
+              <FileName>ad7323.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\user\ad7323.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>ad7323.hpp</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\user\ad7323.hpp</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

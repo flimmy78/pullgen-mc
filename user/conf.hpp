@@ -5,6 +5,4 @@
 #include "misc.hpp"
 #include "pinout.hpp"
 
-#undef CONV
-
 #endif//_CONF_HPP_

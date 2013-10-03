@@ -20,8 +20,9 @@ void pinout_init() AUTORUN;
 #define I_T2_2 PA1
 
 //SPI1
+#define O_SPI1_CSn PA4
 #define P_SPI1_SCK PA5
-#define P_SPI1_MISO PA6
+#define I_SPI1_MISO PA6
 #define P_SPI1_MOSI PA7
 
 

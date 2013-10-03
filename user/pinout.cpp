@@ -32,7 +32,8 @@ void pinout_init(){
     I_T2_2 = 1; IP(I_T2_2);
 
     //SPI1
+    O_SPI1_CSn = 1; O(O_SPI1_CSn);
     P(P_SPI1_SCK);
-    P(P_SPI1_MISO);
+    I(I_SPI1_MISO);
     P(P_SPI1_MOSI);
 }

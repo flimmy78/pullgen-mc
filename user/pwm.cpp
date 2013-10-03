@@ -48,7 +48,7 @@ void pwm_init() {
 void pwm_on() {
     TIM1->EGR = TIM_EGR_UG; //reset counter
     TIM1->BDTR |= TIM_BDTR_MOE; //output enable
-    TIM1->CR1 |= TIM_CR1_CEN; //start 
+    TIM1->CR1 |= TIM_CR1_CEN; //start
 }
 void pwm_off() {
     TIM1->BDTR &=~ TIM_BDTR_MOE; //output disable
