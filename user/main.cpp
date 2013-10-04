@@ -97,3 +97,9 @@ __task void main_task() {
 int main() {
     os_sys_init_prio(main_task, 0xFE);
 }
+
+IRQ_DECL(TIM1_UP_IRQn, TIM1_UP_IRQHandler, 1, 0);
+extern "C" void TIM1_UP_IRQHandler(void) {
+}
+//to enable interrupt:
+//  NVIC_EnableIRQ(TIM1_UP_IRQn);
