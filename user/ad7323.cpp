@@ -15,10 +15,17 @@ ad7323_range_t ad7323_range;
 
 #define SPI_CSn O_SPI1_CSn
 #define WAIT_UNTIL(flag, val) while (PERIPH_SBIT(SPI, SPI1, SR, flag) != (val))
+#define STROBE() do { \
+    SPI_CSn = 1; \
+    for (volatile int i = 10 ; i --> 0 ; --i) ; \
+    SPI_CSn = 0; \
+} while (0)
 
-static void tx(uint16_t data) {
-    WAIT_UNTIL(TXE, 1);
+static void tx_break(uint16_t data) {
     SPI1->DR = data;
+    WAIT_UNTIL(TXE, 1);
+    WAIT_UNTIL(BSY, 0);
+    STROBE();
 }
 
 
@@ -36,7 +43,7 @@ void ad7323_init() {
               | (SPI_CR1_MSTR) //master mode
               | (SPI_CR1_SSM) //soft CSn
               | (SPI_CR1_SSI)
-              | (SPI_CR1_BR_0 * (5-1)) //baud == 72MHz / 2^5 == 2.25MHz
+              | (SPI_CR1_BR_0 * (7-1)) //baud == 72MHz / 2^7 == 0.5625MHz
               | (SPI_CR1_SPE) //standby
               ;
 
@@ -49,15 +56,11 @@ void ad7323_init() {
 }
 
 void ad7323_conf() {
-    SPI1->CR1 &=~ SPI_CR1_RXONLY;
     SPI_CSn = 0;
 
-    tx(ad7323_seq.all);
-    tx(ad7323_range.all);
-    tx(ad7323_ctrl.all);
-
-    WAIT_UNTIL(TXE, 1);
-    WAIT_UNTIL(BSY, 0);
+    tx_break(ad7323_seq.all);
+    tx_break(ad7323_range.all);
+    tx_break(ad7323_ctrl.all);
 
     SPI_CSn = 1;
 }
@@ -70,8 +73,7 @@ void ad7323_on() {
 
     SPI_CSn = 0;
     WAIT_UNTIL(BSY, 0);
-    uint16_t volatile force_read = SPI1->DR; SPI1->DR = 0; //flush data register
-    SPI1->CR1 |=  SPI_CR1_RXONLY;
+    uint16_t volatile force_read = SPI1->DR; SPI1->DR = 0;
     SPI1->CR2 |=  SPI_CR2_RXNEIE;
 }
 
@@ -80,7 +82,6 @@ void ad7323_off() {
 }
 static void ad7323_off_deferred() {
     SPI1->CR2 &=~ SPI_CR2_RXNEIE;
-    SPI1->CR1 &=~ SPI_CR1_RXONLY;
     WAIT_UNTIL(BSY, 0);
     SPI_CSn = 1;
 }
@@ -89,9 +90,15 @@ static void ad7323_off_deferred() {
 IRQ_DECL(SPI1_IRQn, SPI1_IRQHandler, 1, 0);
 extern "C" void SPI1_IRQHandler(void) {
     if (SPI1->SR & SPI_SR_RXNE) {
-        if (!ad7323_enabled) ad7323_off_deferred();
-        ad7323_data_t x;
-        x.all = SPI1->DR;
-        ad7323_val[x.fields.ch] = x.fields.val;
+        if (ad7323_enabled) {
+            ad7323_data_t x;
+            x.all = SPI1->DR;
+            ad7323_val[x.fields.ch] = x.fields.val;
+            WAIT_UNTIL(BSY, 0);
+            STROBE();
+            SPI1->DR = 0;
+        } else {
+            ad7323_off_deferred();
+        }
     }
 }
