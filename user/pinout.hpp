@@ -19,11 +19,19 @@ void pinout_init() AUTORUN;
 #define I_T2_1 PA0
 #define I_T2_2 PA1
 
-//SPI1
-#define O_SPI1_CSn PA4
-#define P_SPI1_SCK PA5
-#define I_SPI1_MISO PA6
-#define P_SPI1_MOSI PA7
+//SPI2
+#define O_SPI2_CSn  PB12
+#define P_SPI2_SCK  PB13
+#define I_SPI2_MISO PB14
+#define P_SPI2_MOSI PB15
+
+//DAC
+#define A_DAC1 PA4
+#define A_DAC2 PA5
+
+//signals
+#define IP_START PA2
+#define O_STROBE PD8
 
 
 #endif//_PINOUT_HPP_

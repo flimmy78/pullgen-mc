@@ -5,4 +5,8 @@
 #include "misc.hpp"
 #include "pinout.hpp"
 
+
+const int CORE_CLOCK = 72000000;
+
+
 #endif//_CONF_HPP_

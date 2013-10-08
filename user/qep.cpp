@@ -14,11 +14,11 @@ void qep_init() {
     TIM2->ARR = 0xffff; //full range
     TIM2->SMCR = (TIM_SMCR_SMS_0 * 3); //SMS: 3'b011 QEP mode
     TIM2->CCMR1 = (TIM_CCMR1_CC1S_0 * 1) //input capture ch1 -> timer pin 1
-                | (TIM_CCMR1_CC2S_0 * 1) //input captuer ch2 -> timer pin 2
-                ;
+        | (TIM_CCMR1_CC2S_0 * 1) //input captuer ch2 -> timer pin 2
+        ;
     TIM2->CCER = (TIM_CCER_CC1E)
-               | (TIM_CCER_CC2E)
-               ;
+        | (TIM_CCER_CC2E)
+        ;
 }
 
 void qep_on() {

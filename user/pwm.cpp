@@ -11,12 +11,10 @@ uint32_t volatile * const pwm_ch2p_en = (uint32_t volatile *)PERIPH_PBIT(TIM, TI
 uint32_t volatile * const pwm_ch2n_en = (uint32_t volatile *)PERIPH_PBIT(TIM, TIM1, CCER, CC2NE);
 uint32_t volatile * const pwm_ch3p_en = (uint32_t volatile *)PERIPH_PBIT(TIM, TIM1, CCER, CC3E);
 uint32_t volatile * const pwm_ch3n_en = (uint32_t volatile *)PERIPH_PBIT(TIM, TIM1, CCER, CC3NE);
-uint32_t volatile * const pwm_ch4_en  = (uint32_t volatile *)PERIPH_PBIT(TIM, TIM1, CCER, CC4E);
 
 uint16_t volatile * const pwm_ch1_duty = &(TIM1->CCR1);
 uint16_t volatile * const pwm_ch2_duty = &(TIM1->CCR2);
 uint16_t volatile * const pwm_ch3_duty = &(TIM1->CCR3);
-uint16_t volatile * const pwm_ch4_duty = &(TIM1->CCR4);
 
 
 void pwm_init() {
@@ -25,10 +23,13 @@ void pwm_init() {
     RCC_RSTR(APB2, TIM1RST) = 0;
 
     TIM1->ARR = pwm_duty_max;
-    TIM1->CR1 = (TIM_CR1_CMS_0 * 1) //center mode 1
+    TIM1->CR1 = (TIM_CR1_CMS_0 * 2) //2'b10 center mode 2
               | (TIM_CR1_ARPE) //period register buffered
               ;
-    TIM1->DIER = (TIM_DIER_UIE); //interrupt on update
+    
+    //interrupt: use CC4 (triggered only once per full up-down cycle)
+    TIM1->CCR4 = 1;
+    TIM1->DIER = (TIM_DIER_CC4IE);
 
     TIM1->CCMR1 = (TIM_CCMR1_OC1PE) //duty register buffered
                 | (TIM_CCMR1_OC1M_0 * 6) //3'b110 PWM mode 1

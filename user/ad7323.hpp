@@ -4,8 +4,12 @@
 #include "stdint.h"
 
 
+const int ad7323_freq_Hz = 20000;
+const int ad7323_period_Tk = 72000000/ad7323_freq_Hz;
+
+
 extern bool ad7323_enabled;
-extern uint16_t ad7323_val[4];
+extern uint16_t volatile ad7323_val[4];
 
 
 ////////////
@@ -108,9 +112,9 @@ extern ad7323_range_t ad7323_range;
 union ad7323_data_t {
     uint16_t all;
     __packed struct {
-        uint16_t val     : 13; //[12: 0] {sign, value}
-        uint16_t ch      : 2;  //[14:13] channel
-        uint16_t _15     : 1;  //[15:15] reserved
+        int16_t val     : 13; //[12: 0] signed value (2's compl)
+        uint16_t ch      : 2; //[14:13] channel
+        uint16_t _15     : 1; //[15:15] reserved
     } fields;
 };
 
